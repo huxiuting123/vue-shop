@@ -1,5 +1,6 @@
 <template>
  <div class="login_container">
+   <img src="../assets/bg.jpg" alt="">
     <div class="login_box">
        <!-- 头像区域 -->
       <div class="avatar_box">
@@ -62,6 +63,10 @@ export default {
 .login_container {
   background-color: #2b4b6b;
   height: 100%;
+  img{
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .login_box {
