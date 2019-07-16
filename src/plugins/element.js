@@ -1,4 +1,14 @@
 import Vue from 'vue'
-import { Button } from 'element-ui'
+import {
+  Button,
+  Input,
+  Form,
+  FormItem
 
-Vue.use(Button)
+} from 'element-ui'
+
+Vue
+  .use(Button)
+  .use(Input)
+  .use(Form)
+  .use(FormItem)
