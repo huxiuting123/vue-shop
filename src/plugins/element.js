@@ -11,7 +11,18 @@ import {
   container,
   Menu,
   Submenu,
-  MenuItem
+  MenuItem,
+  Breadcrumb,
+  BreadcrumbItem,
+  Card,
+  Row,
+  Col,
+  Table,
+  TableColumn,
+  Switch,
+  Tooltip,
+  Pagination,
+  Dialog
 
 } from 'element-ui'
 
@@ -27,5 +38,18 @@ Vue
   .use(Menu)
   .use(Submenu)
   .use(MenuItem)
-  // 在vue原型上挂载一个$messag 这个messag是element-ui上的方法 这样$Message就可以在全局上面使用
-Vue.prototype.$Message = Message
+  .use(Breadcrumb)
+  .use(BreadcrumbItem)
+  .use(Card)
+  .use(Row)
+  .use(Col)
+  .use(Table)
+  .use(TableColumn)
+  .use(Switch)
+  .use(Tooltip)
+  .use(Pagination)
+  .use(Dialog)
+  .use(Table)
+
+// 在vue原型上挂载一个$messag 这个messag是element-ui上的方法 这样$Message就可以在全局上面使用
+Vue.prototype.$message = Message

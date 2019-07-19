@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
+import router from './router/index'
 import './plugins/element.js'
 // 引入公共样式文件
 import './assets/css/global.css'

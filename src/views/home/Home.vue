@@ -8,7 +8,7 @@
     <el-button type="info" @click="logout">退出</el-button>
   </el-header>
   <el-container>
-    <el-aside width="with">
+    <el-aside :width="width">
       <div class="toggle-button" @click="toggleCollapse">|||</div>
       <el-menu
       background-color="#333744"
@@ -17,6 +17,8 @@
       :unique-opened="true"
       :collapse="iscollapse"
       :collapse-transition="false"
+      router
+      :default-active="isactive"
       >
       <!-- 一级菜单 -->
       <el-submenu :index="menu.id+''" v-for="menu in menus" :key="menu.id">
@@ -28,7 +30,7 @@
           <span>{{menu.authName}}</span>
         </template>
         <!-- 二级菜单 通过for循环生成一级导航菜单 :index="submenu.id+''" 因为是循环生成的所以点击一个菜单所有的菜单都会跟着一起 所以绑定id 因为是唯一的 注意必须是字符串-->
-         <el-menu-item :index="submenu.id+''" v-for="submenu in menu.children" :key="submenu.id">
+         <el-menu-item :index="'/'+submenu.path" v-for="submenu in menu.children" :key="submenu.id" @click="savePath('/'+submenu.path)">
            <template slot="title">
                <!-- 图标 -->
           <i class="el-icon-location-outline"></i>
@@ -39,7 +41,11 @@
       </el-submenu>
     </el-menu>
     </el-aside>
-    <el-main>Main</el-main>
+    <el-main>
+      <router-view>
+
+      </router-view>
+    </el-main>
   </el-container>
 </el-container>
 </template>
@@ -57,12 +63,14 @@ export default {
       '145': 'iconfont icon-baobiao'
     },
     // 是否开启折叠菜单导航默认是false
-    iscollapse: false
+    iscollapse: false,
+    isactive: ''
   }),
   // 在生命周期中是vue实例化数据对象就是刚刚有数据的时候所以在这里请求是罪最快的
   created() {
     // 调用下面发送ajax请求函数
     this.getMenus()
+    this.isactive = sessionStorage.getItem('isactive')
   },
   methods: {
     // 点击的时候清空本地存储并且用编程式导航跳转到登录页面
@@ -80,12 +88,16 @@ export default {
     // 收缩导航菜单栏如果点击|||时候取反
     toggleCollapse() {
       this.iscollapse = !this.iscollapse
+    },
+    savePath(active) {
+      this.isactive = active
+      sessionStorage.setItem('isactive', active)
     }
   },
   // 计算属性 如果菜单导航收缩时候 这个菜单导航的宽度也要跟着一起变化这时候就判断toggleCollapse的状态
   computed: {
-    with() {
-      return this.toggleCollapse ? '64px' : '200px'
+    width() {
+      return this.iscollapse ? '64px' : '200px'
     }
   }
 }
@@ -106,7 +118,7 @@ export default {
        display: flex;
        align-items: center ;
       span{
-         margin-left: 10px;
+         margin-left: 15px;
       }
     }
   }
@@ -128,7 +140,7 @@ export default {
 
  .toggle-button{
    background-color: #4a5064;
-  font-size: 10px;
+  font-size: 16px;
   line-height: 24px;
   color: #fff;
   text-align: center;

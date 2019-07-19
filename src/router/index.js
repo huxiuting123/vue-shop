@@ -1,14 +1,29 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from './components/Login.vue'
-import Home from './ve/home/Home.vue'
+import Login from '../views/login/Login.vue'
+import Home from '../views/home/Home.vue'
+import Wlecome from '../views/home/welcome'
+import Users from '../views/users'
 Vue.use(Router)
 
 const router = new Router({
   routes: [
     { path: '/', redirect: '/login' },
     { path: '/login', component: Login },
-    { path: '/home', component: Home }
+    { path: '/home',
+      component: Home,
+      redirect: '/welcome',
+      children: [
+        {
+          path: '/welcome',
+          component: Wlecome
+        },
+        {
+          path: '/users',
+          component: Users
+        }
+      ]
+    }
   ]
 })
 // 路由安全守卫通过beforeEach方法，是vuerouter里面提供的方法

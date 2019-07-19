@@ -1,10 +1,10 @@
 <template>
  <div class="login_container">
-   <img src="../assets/bg3.jpg" alt="">
+   <img src="./bg3.jpg" alt="">
     <div class="login_box">
        <!-- 头像区域 -->
       <div class="avatar_box">
-        <img src="../assets/tx1.jpg" alt="">
+        <img src="./tx1.jpg" alt="">
       </div>
     <el-form class="login_form" :model="loginFrom" :rules="loginRules" ref="loginRef">
          <!-- 用户名 -->
