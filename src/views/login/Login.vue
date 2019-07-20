@@ -63,9 +63,9 @@ export default {
           // console.log(res)
           // 如果转态的信息不等于200就登录失败
           if (res.meta.status !== 200) {
-            this.$Message.error('登录失败')// error失败
+            this.$message.error('登录失败')// error失败
           } else {
-            this.$Message.success('登录成功')// success成功
+            this.$message.success('登录成功')// success成功
             // 登录成功之后把token值保存到本地存储sessionStorage页面关闭时候消失
             sessionStorage.setItem('token', res.data.token)
             // 通过路由导航跳转到home页面
