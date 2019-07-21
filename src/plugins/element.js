@@ -22,11 +22,19 @@ import {
   Switch,
   Tooltip,
   Pagination,
-  Dialog
-
+  Dialog,
+  MessageBox,
+  Tag,
+  Tree,
+  Select,
+  Option
 } from 'element-ui'
 
 Vue
+  .use(Option)
+  .use(Select)
+  .use(Tree)
+  .use(Tag)
   .use(Button)
   .use(Input)
   .use(Form)
@@ -53,3 +61,4 @@ Vue
 
 // 在vue原型上挂载一个$messag 这个messag是element-ui上的方法 这样$Message就可以在全局上面使用
 Vue.prototype.$message = Message
+Vue.prototype.$confirm = MessageBox.confirm
