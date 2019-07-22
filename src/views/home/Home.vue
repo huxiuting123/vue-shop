@@ -82,7 +82,7 @@ export default {
     async getMenus() { // 为什么要搭配async await 因为得到的数据就是promist
       const { data: { data, meta } } = await this.$http.get('menus')
       if (meta.status !== 200) return this.$Message.error(meta.msg)
-      console.log(data)
+      // console.log(data)
       this.menus = data
     },
     // 收缩导航菜单栏如果点击|||时候取反

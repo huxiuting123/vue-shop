@@ -8,6 +8,9 @@ import './assets/css/global.css'
 import './assets/fonts/iconfont.css'
 // 引入api接口文件
 import './api'
+// 引入第三方的树状表格
+import TreeTble from 'vue-table-with-tree-grid'
+Vue.component('tree-table', TreeTble)
 Vue.config.productionTip = false
 
 new Vue({

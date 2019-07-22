@@ -39,11 +39,12 @@
          </template>
        </el-table-column>
         <el-table-column  label="操作" width="175px">
+          <!--  -->
           <template slot-scope="scope">
                 <el-button type="primary" icon="el-icon-edit" size="mini" @click="shouEdit(scope.row.id)"></el-button>
                 <el-button type="danger" icon="el-icon-delete" size="mini" @click="deltUsersByid(scope.row.id)"></el-button>
-            <el-tooltip  effect="dark" content="Top Center 提示文字" placement="top" :enterable='false'>
-              <el-button type="warning" icon="el-icon-share" size="mini"></el-button>
+            <el-tooltip  effect="dark" content="分配角色" placement="top" :enterable='false'>
+              <el-button type="warning" icon="el-icon-share" size="mini" @click="clickgetRow(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -60,7 +61,7 @@
     </el-pagination>
     <!-- 添加用户对话框 -->
     <el-dialog
-    title="添加用户"
+     title="添加用户"
     :visible.sync="addDialogVisible"
     width="50%"
      @close="clearformData"
@@ -112,6 +113,36 @@
   </span>
 </el-dialog>
     </el-card>
+
+      <!-- 分配权限对话框 -->
+  <el-dialog
+  title="分配权限对话框"
+  :visible.sync="setRightsDialog"
+  width="50%"
+   @close="dletesformData"
+ >
+  <!-- <el-tree :data="rightList" :props="treeProps" ref="treeRef" show-checkbox node-key="id" default-expand-all
+   :default-checked-keys="defkeys"
+  ></el-tree> -->
+  <div>
+    <p>当前的用户:{{usersInfor.username}}</p>
+    <p>当前的角色:{{usersInfor.role_name}}</p>
+    <p>分配新角色:
+        <el-select v-model="selectedRoleId" placeholder="请选择">
+    <el-option
+      v-for="item in roleList"
+      :key="item.id"
+      :label="item.roleName"
+      :value="item.id">
+    </el-option>
+  </el-select>
+    </p>
+  </div>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="setRightsDialog = false">取 消</el-button>
+    <el-button type="primary" @click="setRightInfo">确 定</el-button>
+  </span>
+</el-dialog>
   </div>
 </template>
 <script>
@@ -121,27 +152,21 @@ export default {
     var checkEmail = (rule, value, cb) => {
       // 验证邮箱的正则表达式
       const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
-
       if (regEmail.test(value)) {
         // 合法的邮箱
         return cb()
       }
-
       cb(new Error('请输入合法的邮箱'))
     }
-
     // 验证手机号的规则
     var checkMobile = (rule, value, cb) => {
       // 验证手机号的正则表达式
       const regMobile = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/
-
       if (regMobile.test(value)) {
         return cb()
       }
-
       cb(new Error('请输入合法的手机号'))
     }
-
     return {
       queryInfo: {
         query: '',
@@ -199,7 +224,14 @@ export default {
           { required: true, message: '请输入电话', trigger: 'blur' },
           { validator: checkMobile, trigger: 'blur' }
         ]
-      }
+      },
+      setRightsDialog: false,
+      // 分配角色的数据
+      usersInfor: {},
+      // 所有角色链表数据
+      roleList: [],
+      // 已选择的角色
+      selectedRoleId: ''
     }
   },
   created() {
@@ -292,7 +324,7 @@ export default {
         this.getUserList()
       })
     },
-    async  deltUsersByid(id) {
+    async deltUsersByid(id) {
       // console.log(id)
       // 搭配es6和es7一起使用try成功 catch失败
       try {
@@ -303,8 +335,8 @@ export default {
         })
         // 成功之后的获取数据
         const { data: res } = await this.$http.delete('users/' + id)
-        // console.log(res)
-        // console.log(this.mydata.id)
+        console.log(res)
+        console.log(this.mydata.id)
         if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
         // 创建成功提示用户删除成功
         this.$message.success(res.meta.msg)
@@ -313,6 +345,33 @@ export default {
       } catch (err) {
         this.$message.info('已撤销改删除')
       }
+    },
+    // 分配角色的数据
+    async  clickgetRow(usersInfor) {
+      this.usersInfor = usersInfor
+      console.log(usersInfor)
+      // 获取角色数据
+      const { data: res } = await this.$http.get('roles')
+      // console.log(res)
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      // this.$message.success(res.meta.msg)
+      this.roleList = res.data
+      this.setRightsDialog = true
+    },
+    // 提价修改数据
+    async setRightInfo() {
+      if (!this.selectedRoleId) return this.$message.error('请选择要分配的角色')
+      const { data: res } = await this.$http.put(`users/${this.usersInfor.id}/role`, { rid: this.selectedRoleId })
+      // console.log(this.usersInfor.id)
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.setRightsDialog = false
+      this.getUserList()
+    },
+    // 重置数据
+    dletesformData() {
+      this.selectedRoleId = ''
+      this.usersInfor = {}
     }
   }
 }
