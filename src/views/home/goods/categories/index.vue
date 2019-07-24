@@ -10,7 +10,7 @@
     <el-card>
        <el-row>
          <el-col>
-           <el-button type="success" @click="showAddlog">添加角色</el-button>
+           <el-button type="success" @click="showAddlog">添加分类</el-button>
          </el-col>
        </el-row>
        <!-- 表格 -->
@@ -41,6 +41,7 @@
   title="添加角色"
   :visible.sync="addCateDialog"
   width="50%"
+  @close="addCatedataRemov"
   >
   <el-form :model="addFromData" :rules="addFromDataRules" ref="addFromDataRef" label-width="100px">
   <el-form-item label="分类名称:" prop="cat_name">
@@ -48,11 +49,18 @@
   </el-form-item>
   <!-- 父级分类 -->
   <el-form-item label="分类名称:">
+  <el-cascader
+    clearable
+    v-model="seletedKeys"
+    :options="parentCateList"
+    expandTrigger= 'hover'
+    :props="clasCateProp"
+    @change="pareChange"></el-cascader>
   </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addCateDialog = false">取 消</el-button>
-    <el-button type="primary" @click="addCateDialog = false">确 定</el-button>
+    <el-button type="primary" @click="addCatedata">确 定</el-button>
   </span>
 </el-dialog>
   </div>
@@ -118,7 +126,15 @@ export default {
         ]
       },
       // 获取到的点击添加分类的数据
-      parentCateList: {}
+      parentCateList: [],
+      // 联级数据双向绑定数据
+      seletedKeys: [],
+      // 联级数据对象
+      clasCateProp: {
+        value: 'cat_id',
+        label: 'cat_name',
+        children: 'children'
+      }
     }
   },
   created() {
@@ -149,6 +165,39 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       // console.log(res)
       this.parentCateList = res.data
+    },
+    // 监听到联级数据变化
+    pareChange() {
+      if (this.seletedKeys.length > 0) {
+        // 父级分类的id
+        this.addFromData.cat_pid = this.seletedKeys[this.seletedKeys.length - 1]
+        // 为当前分类的等级赋值
+        this.addFromData.cat_level = this.seletedKeys.length
+      } else {
+        this.addFromData.cat_pid = 0
+        // 为当前分类的等级赋值
+        this.addFromData.cat_level = 0
+      }
+    },
+    // 提交分类数据
+    addCatedata() {
+      this.$refs.addFromDataRef.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.post('categories', this.addFromData)
+        // console.log(res)
+        if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
+        this.$message.success(res.meta.msg)
+        // 重新渲染页面
+        this.getCateList()
+        this.addCateDialog = false
+      })
+    },
+    // 重置表单
+    addCatedataRemov() {
+      this.$refs.addFromDataRef.resetFields()
+      this.addFromData.cat_level = 0
+      this.addFromData.cat_pid = 0
+      this.seletedKeys = []
     }
   }
 }
